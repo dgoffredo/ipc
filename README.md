@@ -28,8 +28,7 @@ Build
 -----
 
 `ipc` is built using a BDE-style-specific variant of the `waf` build tool,
-because that's what `BDE` uses. For more information, see [how to build a
-repository with BDE's waf][bde-build].
+because that's what `BDE` uses. For more information, see [BUILD.md](BUILD.md).
 
 More
 ----
