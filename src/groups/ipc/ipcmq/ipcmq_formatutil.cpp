@@ -2,7 +2,7 @@
 #include <ipcmq_formatutil.h>
 #include <ipcmq_posixqueueerrors.h>
 
-#include <bael_log.h>
+#include <ball_log.h>
 
 #include <bdeu_arrayutil.h>
 
@@ -79,7 +79,7 @@ int tempDirectoryPath(bsl::string *output)
     // that the value written to 'output' might or might not end with a
     // forward slash.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
     // This function does the same thing as POSIX implementations of
     // 'std::filesystem::temp_directory_path'.
@@ -98,13 +98,13 @@ int tempDirectoryPath(bsl::string *output)
 
     const bool followLinks = true;
     if (!bdls::FilesystemUtil::isDirectory(value, followLinks)) {
-        BAEL_LOG_WARN << "The path \"" << value << "\"";
+        BALL_LOG_WARN << "The path \"" << value << "\"";
         if (variable != end) {
-            BAEL_STREAM
+            BALL_STREAM
                 << ", which is the value of the environment variable \""
                 << *variable << "\",";
         }
-        BAEL_STREAM << " is not a directory." << BAEL_LOG_END;
+        BALL_STREAM << " is not a directory." << BALL_LOG_END;
         return 1;                                                     // RETURN
     }
 
@@ -118,7 +118,7 @@ int openTempFile(bsl::string *name)
     // through the specified 'name'. Return '-1' if an error occurs. Note that
     // 'name' might still be modified even if this function fails.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
     BSLS_ASSERT(name);
 
     if (tempDirectoryPath(name)) {
@@ -142,9 +142,9 @@ int openTempFile(bsl::string *name)
             return fd;                                                // RETURN
         }
 
-        BAEL_LOG_WARN << "Unable to create temporary file at \"" << *name
+        BALL_LOG_WARN << "Unable to create temporary file at \"" << *name
                       << "\". Attempt " << attempt << '/' << MAX_ATTEMPTS
-                      << " errno: " << bsl::strerror(errno) << BAEL_LOG_END;
+                      << " errno: " << bsl::strerror(errno) << BALL_LOG_END;
     }
 
     // ran out of retries
@@ -158,7 +158,7 @@ int writeToTempFile(const bslstl::StringRef& data, bsl::string *path)
     // not be open by this process when this function returns. Also note that
     // 'path' might be modified even if this function fails.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
     BSLS_ASSERT(path);
 
     const int fd = openTempFile(path);
@@ -177,16 +177,16 @@ int writeToTempFile(const bslstl::StringRef& data, bsl::string *path)
 
     const ssize_t writtenSize = write(fd, data.data(), data.length());
     if (writtenSize == -1) {
-        BAEL_LOG_ERROR << "Unable to write to temporary file: "
-                       << bsl::strerror(errno) << BAEL_LOG_END;
+        BALL_LOG_ERROR << "Unable to write to temporary file: "
+                       << bsl::strerror(errno) << BALL_LOG_END;
         return errno;                                                 // RETURN
     }
 
     if (writtenSize != ssize_t(data.length())) {
-        BAEL_LOG_ERROR << "Tried to write " << data.length()
+        BALL_LOG_ERROR << "Tried to write " << data.length()
                        << " bytes to the temporary file \"" << *path
                        << "\" but only " << writtenSize << " were written."
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
         return -1;                                                    // RETURN
     }
 
@@ -199,7 +199,7 @@ int readAndRemoveFile(bsl::string *bufferPtr)
     // nonzero value otherwise. If this function fails, 'bufferPtr' might still
     // have been modified.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
     BSLS_ASSERT(bufferPtr);
 
     bsl::string&  buffer = *bufferPtr;
@@ -207,9 +207,9 @@ int readAndRemoveFile(bsl::string *bufferPtr)
 
     bsl::FILE *const message = bsl::fopen(path, "r");
     if (!message) {
-        BAEL_LOG_ERROR << "Unable to open the file \"" << path
+        BALL_LOG_ERROR << "Unable to open the file \"" << path
                        << "\" for reading: " << bsl::strerror(errno)
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
         return 1;                                                     // RETURN
     }
 
@@ -223,16 +223,16 @@ int readAndRemoveFile(bsl::string *bufferPtr)
         }
         ~Closer()
         {
-            BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+            BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
             if (bsl::fclose(d_file)) {
-                BAEL_LOG_WARN << "Unable to close file \"" << d_path << '\"'
-                              << BAEL_LOG_END;
+                BALL_LOG_WARN << "Unable to close file \"" << d_path << '\"'
+                              << BALL_LOG_END;
             }
 
             if (bsl::remove(d_path)) {
-                BAEL_LOG_WARN << "Unable to remove file \"" << d_path << '\"'
-                              << BAEL_LOG_END;
+                BALL_LOG_WARN << "Unable to remove file \"" << d_path << '\"'
+                              << BALL_LOG_END;
             }
         }
 
@@ -241,8 +241,8 @@ int readAndRemoveFile(bsl::string *bufferPtr)
     const bdls::FilesystemUtil::Offset sizeSigned =
         bdls::FilesystemUtil::getFileSize(path);
     if (sizeSigned < 0) {
-        BAEL_LOG_ERROR << "Unable to determine the size the the file \""
-                       << path << '\"' << BAEL_LOG_END;
+        BALL_LOG_ERROR << "Unable to determine the size the the file \""
+                       << path << '\"' << BALL_LOG_END;
         return 2;                                                     // RETURN
     }
     else if (sizeSigned == 0) {
@@ -262,18 +262,18 @@ int readAndRemoveFile(bsl::string *bufferPtr)
 
     const bsl::size_t countRead = bsl::fread(&buffer[0], 1, room, message);
     if (countRead < size) {
-        BAEL_LOG_ERROR << "Unable to read entire contents of \"" << path
+        BALL_LOG_ERROR << "Unable to read entire contents of \"" << path
                        << "\". Expected " << size << " bytes but got only "
-                       << countRead << BAEL_LOG_END;
+                       << countRead << BALL_LOG_END;
         return 3;                                                     // RETURN
     }
     else if (countRead > size) {
         BSLS_ASSERT(countRead == room);
 
-        BAEL_LOG_ERROR << "Read more bytes from \"" << path
+        BALL_LOG_ERROR << "Read more bytes from \"" << path
                        << "\" than expected. Expected " << size << " but read "
                        << countRead << ". Maybe the file was modified."
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
         return 4;                                                     // RETURN
     }
 
@@ -368,13 +368,13 @@ int FormatUtil::encodeExtended(long               maxMessageSize,
 
 int FormatUtil::decodeExtended(bsl::string *originalAndOutput)
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
     BSLS_ASSERT(originalAndOutput);
 
     bsl::string& message = *originalAndOutput;
     if (message.empty()) {
-        BAEL_LOG_ERROR << "The extended codec cannot decode an empty message."
-                       << BAEL_LOG_END;
+        BALL_LOG_ERROR << "The extended codec cannot decode an empty message."
+                       << BALL_LOG_END;
         return makeError(e_DECODER_ERROR);                            // RETURN
     }
 
@@ -396,10 +396,10 @@ int FormatUtil::decodeExtended(bsl::string *originalAndOutput)
         return 0;                                                     // RETURN
     }
 
-    BAEL_LOG_ERROR
+    BALL_LOG_ERROR
         << "The final byte of message is 0x" << bsl::hex << int(lastByte)
         << ", which is not one of the accepted values for the extended codec."
-        << BAEL_LOG_END;
+        << BALL_LOG_END;
     return makeError(e_DECODER_ERROR);
 }
 

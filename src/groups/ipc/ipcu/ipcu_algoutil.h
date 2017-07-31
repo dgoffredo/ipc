@@ -1,7 +1,7 @@
 #ifndef INCLUDED_IPCU_ALGOUTIL
 #define INCLUDED_IPCU_ALGOUTIL
 
-#include <bael_log.h>
+#include <ball_log.h>
 
 #include <bsl_limits.h>
 
@@ -101,7 +101,7 @@ NUMBER AlgoUtil::midpoint(NUMBER a, NUMBER b)
 template <typename NUMBER, typename PREDICATE>
 NUMBER AlgoUtil::findMaxIf(NUMBER startingValue, PREDICATE notTooLarge)
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
     BSLS_ASSERT(startingValue >= NUMBER(0));
     BSLS_ASSERT(notTooLarge(startingValue));
@@ -121,9 +121,9 @@ NUMBER AlgoUtil::findMaxIf(NUMBER startingValue, PREDICATE notTooLarge)
     for (NUMBER highest = startingValue,  // highest working value so far
          ceiling        = startingValue;  // lowest non-working value so far
          current != highest;) {
-        BAEL_LOG_TRACE << "findMaxIf iterating with highest=" << highest
+        BALL_LOG_TRACE << "findMaxIf iterating with highest=" << highest
                        << " ceiling=" << ceiling << " current=" << current
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
 
         if (current == highest) {
             // Either we hit a ceiling or dropped back down to where we were.

@@ -1,7 +1,7 @@
-#include <bael_defaultobserver.h>
-#include <bael_log.h>
-#include <bael_loggermanager.h>
-#include <bael_loggermanagerconfiguration.h>
+#include <ball_defaultobserver.h>
+#include <ball_log.h>
+#include <ball_loggermanager.h>
+#include <ball_loggermanagerconfiguration.h>
 
 #include <bdlt_currenttime.h>
 
@@ -15,19 +15,19 @@ using namespace BloombergLP;
 
 namespace {
 
-bael_LoggerManagerConfiguration defaultLoggingConfiguration()
+ball_LoggerManagerConfiguration defaultLoggingConfiguration()
 {
-    bael_LoggerManagerConfiguration configuration;
-    configuration.setDefaultThresholdLevelsIfValid(bael_Severity::BAEL_DEBUG);
+    ball_LoggerManagerConfiguration configuration;
+    configuration.setDefaultThresholdLevelsIfValid(ball_Severity::BALL_DEBUG);
     return configuration;
 }
 
-class BaelCrap {
-    bael_DefaultObserver          d_observer;
-    bael_LoggerManagerScopedGuard d_scopedGuard;
+class BallCrap {
+    ball_DefaultObserver          d_observer;
+    ball_LoggerManagerScopedGuard d_scopedGuard;
 
   public:
-    BaelCrap()
+    BallCrap()
     : d_observer(bsl::cout)
     , d_scopedGuard(&d_observer, defaultLoggingConfiguration())
     {
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 {
     BSLS_ASSERT(argc >= 2);
 
-    BaelCrap bael;
+    BallCrap ball;
 
     ipcmq::PosixQueue queue;
 

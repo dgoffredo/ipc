@@ -2,7 +2,7 @@
 #include <ipcmq_posixqueue.h>
 #include <ipcu_algoutil.h>
 
-#include <bael_log.h>
+#include <ball_log.h>
 
 #include <bdeu_arrayutil.h>
 
@@ -42,11 +42,11 @@ bsl::string systemError(int errorNumber)
 
 #define LOG_UNEXPECTED(ERROR_NUMBER)                                          \
     {                                                                         \
-        BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);                                \
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);                                \
         const int eRrOrNuMbEr = (ERROR_NUMBER);                               \
-        BAEL_LOG_WARN << "Unexpected error number " #ERROR_NUMBER "="         \
+        BALL_LOG_WARN << "Unexpected error number " #ERROR_NUMBER "="         \
                       << eRrOrNuMbEr << " which is the system error "         \
-                      << systemError(eRrOrNuMbEr) << BAEL_LOG_END;            \
+                      << systemError(eRrOrNuMbEr) << BALL_LOG_END;            \
     }
 
 template <typename OPERATION>
@@ -129,18 +129,18 @@ void randomQueueName(bsl::string *outputPtr)
 
 void closeAndUnlinkTemporaryQueue(mqd_t queue, const bsl::string& name)
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
     int rc = mq_close(queue);
     if (rc == -1) {
-        BAEL_LOG_WARN << "Unable to close temporary queue. errno=" << errno
-                      << BAEL_LOG_END;
+        BALL_LOG_WARN << "Unable to close temporary queue. errno=" << errno
+                      << BALL_LOG_END;
     }
 
     rc = mq_unlink(name.c_str());
     if (rc == -1) {
-        BAEL_LOG_WARN << "Unable to unlink temporary queue. errno=" << errno
-                      << BAEL_LOG_END;
+        BALL_LOG_WARN << "Unable to unlink temporary queue. errno=" << errno
+                      << BALL_LOG_END;
     }
 }
 
@@ -157,7 +157,7 @@ int temporaryQueue(const mq_attr *inputAttributes, mq_attr *outputAttributes)
     // 'outputAttributes' is not zero and the querying of the queue's
     // attributes fails, return the nonzero 'errno'.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
     bsl::string name;
     mqd_t       queue;
@@ -180,11 +180,11 @@ int temporaryQueue(const mq_attr *inputAttributes, mq_attr *outputAttributes)
                     break;  // break from switch to re-enter loop
                 }
               default: {
-                BAEL_LOG_TRACE
+                BALL_LOG_TRACE
                     << "Unable to create a temporary queue with name=" << name
                     << " got errno=" << errno
                     << " which corresponds to the system error: "
-                    << systemError(errno) << BAEL_LOG_END;
+                    << systemError(errno) << BALL_LOG_END;
                 return errno;                                         // RETURN
               }
             }
@@ -202,10 +202,10 @@ int temporaryQueue(const mq_attr *inputAttributes, mq_attr *outputAttributes)
     if (outputAttributes) {
         rc = mq_getattr(queue, outputAttributes);
         if (rc == -1) {
-            BAEL_LOG_WARN
+            BALL_LOG_WARN
                 << "Unable to get attributes of temporary queue. Using "
                    "fallback values. errno="
-                << errno << BAEL_LOG_END;
+                << errno << BALL_LOG_END;
             BSLS_ASSERT_SAFE(errno);
             rc = errno;
         }
@@ -227,7 +227,7 @@ mq_attr systemDefaults()
     static const mq_attr *ptr = 0;
     BSLMT_ONCE_DO
     {
-        BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
         static mq_attr fallbackAttributes;
         fallbackAttributes.mq_maxmsg      = FALLBACK_MAX_MESSAGES;
@@ -246,9 +246,9 @@ mq_attr systemDefaults()
         }
 
         BSLS_ASSERT_SAFE(ptr);
-        BAEL_LOG_DEBUG << "system default mq_attr calculated to be: mq_maxmsg="
+        BALL_LOG_DEBUG << "system default mq_attr calculated to be: mq_maxmsg="
                        << ptr->mq_maxmsg << " mq_msgsize=" << ptr->mq_msgsize
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
     }
 
     BSLS_ASSERT_SAFE(ptr);
@@ -270,7 +270,7 @@ bool canCreateQueueWith(long maxMessages, long maxMessageSize)
     // 'maxMessages' as its 'mq_msgmax' attribute and with the specified
     // 'maxMessageSize' as its 'mq_msgsize' attribute.
 {
-    BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+    BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
     mq_attr inputAttributes;
     inputAttributes.mq_maxmsg  = maxMessages;
@@ -305,15 +305,15 @@ long systemMaxMaxMessages()
     static const long *ptr = 0;
     BSLMT_ONCE_DO
     {
-        BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
         static const long value = ipcu::AlgoUtil::findMaxIf(
                    systemDefaultMaxMessages(), &canCreateQueueWithMaxMessages);
         ptr = &value;
 
-        BAEL_LOG_DEBUG
+        BALL_LOG_DEBUG
             << "system maximum value for mq_msgmax calcualated to be " << value
-            << BAEL_LOG_END;
+            << BALL_LOG_END;
     }
 
     BSLS_ASSERT_SAFE(ptr);
@@ -327,15 +327,15 @@ long systemMaxMaxMessageSize()
     static const long *ptr = 0;
     BSLMT_ONCE_DO
     {
-        BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 
         static const long value = ipcu::AlgoUtil::findMaxIf(
              systemDefaultMaxMessageSize(), &canCreateQueueWithMaxMessageSize);
         ptr = &value;
 
-        BAEL_LOG_DEBUG
+        BALL_LOG_DEBUG
             << "system maximum value for mq_msgsize calculated to be " << value
-            << BAEL_LOG_END;
+            << BALL_LOG_END;
     }
 
     BSLS_ASSERT_SAFE(ptr);
@@ -686,10 +686,10 @@ long PosixQueue::numCurrentMessages() const
     mq_attr attrs;
     BSLS_ASSERT_SAFE(d_handle);
     if (mq_getattr(d_handle->d_descriptor, &attrs) == -1) {
-        BAEL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
-        BAEL_LOG_DEBUG << "Unable to get queue attributes. Returning zero for "
+        BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
+        BALL_LOG_DEBUG << "Unable to get queue attributes. Returning zero for "
                           "'numCurrentMessages()'."
-                       << BAEL_LOG_END;
+                       << BALL_LOG_END;
         return 0;                                                     // RETURN
     }
 
