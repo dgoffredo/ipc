@@ -7,7 +7,7 @@
 #include <ipcmq_posixqueue.h>
 #include <ipcmq_sender.h>
 
-#include <bdeut_variant.h>
+#include <bdlb_variant.h>
 
 #include <bsl_string.h>
 
@@ -23,7 +23,7 @@ class QueueSender : public Sender {
     // This class implements the 'Sender' protocol using a 'PosixQueue' object.
 
     // DATA
-    bdeut_Variant2<PosixQueue, PosixQueue *>  d_queue;
+    bdlb::Variant2<PosixQueue, PosixQueue *>  d_queue;
     FormatUtil::Encoder                       d_encoder;
     bslma::Allocator                         *d_messageAllocator;
     PosixQueue::Open::Result                  d_openResult;

@@ -7,7 +7,7 @@
 #include <ipcmq_posixqueue.h>
 #include <ipcmq_receiver.h>
 
-#include <bdeut_variant.h>
+#include <bdlb_variant.h>
 
 #include <bsl_string.h>
 
@@ -25,7 +25,7 @@ class QueueReceiver : public Receiver {
     // object.
 
     // DATA
-    bdeut_Variant2<PosixQueue, PosixQueue *> d_queue;
+    bdlb::Variant2<PosixQueue, PosixQueue *> d_queue;
     FormatUtil::Decoder                      d_decoder;
     PosixQueue::Open::Result                 d_openResult;
 

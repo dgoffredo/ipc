@@ -4,7 +4,7 @@
 
 #include <ball_log.h>
 
-#include <bdeu_arrayutil.h>
+#include <bdlb_arrayutil.h>
 
 #include <bdlma_localsequentialallocator.h>
 
@@ -39,7 +39,7 @@ const char *const k_ERROR_DESCRIPTIONS[] = {
 const char *errorOverflow(int errorCode)
 {
     BSLS_ASSERT(errorCode >= 0);
-    BSLS_ASSERT(errorCode < int(bdeu_ArrayUtil::size(k_ERROR_DESCRIPTIONS)));
+    BSLS_ASSERT(errorCode < int(bdlb::ArrayUtil::size(k_ERROR_DESCRIPTIONS)));
 
     return k_ERROR_DESCRIPTIONS[errorCode];
 }
@@ -86,7 +86,7 @@ int tempDirectoryPath(bsl::string *output)
     BSLS_ASSERT(output);
 
     const char *const variables[] = {"TMPDIR", "TMP", "TEMP", "TEMPDIR"};
-    const char *const *const end  = bdeu_ArrayUtil::end(variables);
+    const char *const *const end  = bdlb::ArrayUtil::end(variables);
 
     bsl::string              value;
     const char *const *const variable =

@@ -4,7 +4,7 @@
 
 #include <ball_log.h>
 
-#include <bdeu_arrayutil.h>
+#include <bdlb_arrayutil.h>
 
 #include <bdlb_guid.h>
 #include <bdlb_guidutil.h>
@@ -124,7 +124,7 @@ void randomQueueName(bsl::string *outputPtr)
     // Shrink, if necessary, to fit minimum POSIX size spec.
     const bsl::string::size_type sizes[] = {
         output.size(), _POSIX_PATH_MAX - 1, _POSIX_NAME_MAX - 1};
-    output.resize(*bsl::min_element(sizes, bdeu_ArrayUtil::end(sizes)));
+    output.resize(*bsl::min_element(sizes, bdlb::ArrayUtil::end(sizes)));
 }
 
 void closeAndUnlinkTemporaryQueue(mqd_t queue, const bsl::string& name)

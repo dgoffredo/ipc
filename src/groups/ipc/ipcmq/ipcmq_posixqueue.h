@@ -3,7 +3,7 @@
 
 #include <ipcmq_posixqueueerrors.h>
 
-#include <bdeut_variant.h>
+#include <bdlb_variant.h>
 
 #include <bsl_string.h>
 
@@ -31,7 +31,7 @@ struct ReadWrite {
 };
 
 struct OpenMode {
-    bdeut_Variant3<ReadOnly, WriteOnly, ReadWrite> d_mode;
+    bdlb::Variant3<ReadOnly, WriteOnly, ReadWrite> d_mode;
 
     template <typename MODE>
     OpenMode(MODE mode)
@@ -50,8 +50,8 @@ struct Default {
 };
 
 struct Attributes {
-    bdeut_Variant3<int, Max, Default> d_maxMessages;
-    bdeut_Variant3<int, Max, Default> d_maxMessageSize;
+    bdlb::Variant3<int, Max, Default> d_maxMessages;
+    bdlb::Variant3<int, Max, Default> d_maxMessageSize;
 
     Attributes()
     : d_maxMessages(Default())
@@ -84,7 +84,7 @@ struct OpenOrCreate {
 };
 
 struct CreateMode {
-    bdeut_Variant3<OpenOnly, CreateOnly, OpenOrCreate> d_mode;
+    bdlb::Variant3<OpenOnly, CreateOnly, OpenOrCreate> d_mode;
 
     template <typename MODE>
     CreateMode(MODE mode)
