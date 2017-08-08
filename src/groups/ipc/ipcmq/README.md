@@ -35,7 +35,7 @@ mode.
 #### ipcmq\_consumer
 Provides `ipcmq::Consumer`, a class that manages a dedicated thread that
 receives from a message queue using an `ipc::QueueReceiver` instance and
-invokes a specified callback with each message received.
+invokes a specified callback for each message received.
 
 #### ipcmq\_format
 Provides `ipcmq::Format`, a `struct` acting as a namespace for an enumeration
@@ -66,21 +66,21 @@ The extended message format ends each message with a discriminator byte that
 is: 
 
 - zero if the message payload can fit inside of the message, in which case the
-  preceding bytes of the message is the payload
+  preceding bytes of the message are the payload
 - one if the message payload is too large to fit inside of the message, in
-  which case the predecing bytes of of the message are the full path to a
-  (temporary) file that contains the message payload
-- some value greater than one for future use. As of this writing, receivers
-  will log a diagnostic and ignore such messages when they are encountered.
+  which case the preceding bytes of of the message are the full path to a
+  temporary file that contains the message payload
+- some other value for future use. As of this writing, receivers will log a
+  diagnostic and ignore such messages when they are encountered.
 
 The receiver of an extended message with an external payload is responsible for
 deleting the temporary file.
 
 Note that since POSIX message queues can be shared between a program using
 `ipcmq` and another program that is not, using the extended message format
-is to assume that all senders and receivers for the message queue are using
-`ipcmq` with the extended format or some other code that implements the exact
-same message format.
+is to assume that all senders and receivers for the message queue are either
+using `ipcmq` with the extended format, or using some other code that
+implements the same message format.
 
 Example Usage
 -------------
@@ -151,14 +151,12 @@ Suppose an application want to drain a specified set of queues, printing each
 payload to `stdout` followed by a newline. In this case, one `ipcmq::Consumer`
 per queue is the best fit:
 ```C++
-ipcmq::Consumer::Result handleMessage(bslmt::Mutex       *coutMutex,
-                                      const bsl::string&  message)
+void handleMessage(bslmt::Mutex       *coutMutex,
+                   const bsl::string&  message)
 {
     bdlmt::LockGuard<bslmt::Mutex> lock(coutMutex);
 
     bsl::cout << message << '\n';
-
-    return ipcmq::Consumer::e_CONTINUE;
 }
 
 int main(int argc, char *argv[])
