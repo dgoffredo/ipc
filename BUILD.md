@@ -23,6 +23,8 @@ $ ln -s /path/to/my/ipc .
 
 $ cp /path/to/my/bde-tools/share/wscript .
 
+$ touch .bdeworkspaceconfig
+
 $ waf configure >/dev/null
 
 $ waf build >/dev/null
