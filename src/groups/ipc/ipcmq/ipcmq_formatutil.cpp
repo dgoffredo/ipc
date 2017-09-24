@@ -113,10 +113,11 @@ int tempDirectoryPath(bsl::string *output)
 }
 
 int openTempFile(bsl::string *name)
-    // Return a file descriptor to a temporary file that the current user can
-    // read and write, and others can only read, and assign its full path
-    // through the specified 'name'. Return '-1' if an error occurs. Note that
-    // 'name' might still be modified even if this function fails.
+    // Return a file descriptor to a temporary file opened for writing that
+    // the current user can read and write, and others can only read, and
+    // assign its full path through the specified 'name'. Return '-1' if an
+    // error occurs. Note that 'name' might still be modified even if this
+    // function fails.
 {
     BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
     BSLS_ASSERT(name);
@@ -334,7 +335,7 @@ int FormatUtil::encodeExtended(long               maxMessageSize,
 
     // If the message is not longer than 'maxMessageSize', then just write it
     // to the 'buffer' along with the trailing "in place" byte.
-    if (long(message.length()) <= maxMessageSize) {
+    if (long(message.length()) < maxMessageSize) {
         // If 'message' aliases 'buffer' completely, then we don't have to
         // copy. Otherwise we do.
         if (message.data() != buffer.data() ||

@@ -626,6 +626,7 @@ Receive::Result PosixQueue::receive(bsl::string               *outputPtr,
     // Resize 'output' so that there aren't any trailing null characters;
     const ssize_t messageSize = rc;
     BSLS_ASSERT_OPT(ssize_t(output.size()) >= messageSize);
+    BSLS_ASSERT_SAFE(messageSize >= 0);
     output.resize(messageSize);
 
     return Receive::e_SUCCESS;
@@ -687,9 +688,9 @@ long PosixQueue::numCurrentMessages() const
     BSLS_ASSERT_SAFE(d_handle);
     if (mq_getattr(d_handle->d_descriptor, &attrs) == -1) {
         BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
-        BALL_LOG_DEBUG << "Unable to get queue attributes. Returning zero for "
-                          "'numCurrentMessages()'."
-                       << BALL_LOG_END;
+        BALL_LOG_WARN << "Unable to get queue attributes. Returning zero for "
+                         "'numCurrentMessages()'."
+                      << BALL_LOG_END;
         return 0;                                                     // RETURN
     }
 

@@ -58,8 +58,8 @@ Consumer::~Consumer()
     d_shuttingDown = true;
     const int rc   = bslmt::ThreadUtil::join(d_thread);
     if (rc) {
-        BALL_LOG_ERROR << "Unable to join consumer thread. On a POSIX system, "
-                          "this most likely means that a deadlock was "
+        BALL_LOG_ERROR << "Unable to join consumer thread. "
+                          "This most likely means that a deadlock was "
                           "detected. The unjoined thread might access data "
                           "members of this object after it is destroyed, so "
                           "the program might now be in a bad state. "
