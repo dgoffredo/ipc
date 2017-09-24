@@ -293,7 +293,7 @@ int readAndRemoveFile(bsl::string *bufferPtr)
 
 FormatUtil::Encoder FormatUtil::encoder(Format format)
 {
-    switch (format.value) {
+    switch (format) {
       case Format::e_RAW:
         return &FormatUtil::encodeRaw;                                // RETURN
       default:
@@ -304,7 +304,7 @@ FormatUtil::Encoder FormatUtil::encoder(Format format)
 
 FormatUtil::Decoder FormatUtil::decoder(Format format)
 {
-    switch (format.value) {
+    switch (format) {
       case Format::e_RAW:
         return &FormatUtil::decodeRaw;                                // RETURN
       default:

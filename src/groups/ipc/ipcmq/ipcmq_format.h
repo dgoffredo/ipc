@@ -10,7 +10,7 @@ namespace ipcmq {
                                 // class Format
                                 // ============
 
-IPCU_DEFINE_ENUM(Format, RAW, EXTENDED)
+IPCU_DEFINE_ENUM(Format, RAW, EXTENDED);
 
 }  // close package namespace
 }  // close enterprise namespace
