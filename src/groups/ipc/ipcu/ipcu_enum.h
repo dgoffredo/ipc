@@ -1,6 +1,8 @@
 #ifndef INCLUDED_IPCU_ENUM
 #define INCLUDED_IPCU_ENUM
 
+#include <bdlat_enumfunctions.h>
+
 #include <bsl_cstddef.h>
 #include <bsl_iomanip.h>
 #include <bsl_ios.h>
@@ -14,6 +16,8 @@
 #include <bslma_default.h>
 
 #include <bslmt_once.h>
+
+#include <bsls_assert.h>
 
 // This component defines a macro for generating enum-like classes:
 //
@@ -67,6 +71,99 @@
 //     }
 // }
 //..
+
+namespace BloombergLP {
+namespace ipcu {
+
+template <typename ENUM>
+class EnumBase {
+    // 'EnumBase' is used as a base class for all classes defined using
+    // 'IPCU_DEFINE_ENUM'.  It allows the 'bdlat_enumfunctions' to be used on
+    // instances of the generated type.
+};
+
+template <typename ENUM>
+int bdlat_enumFromInt(EnumBase<ENUM> *result, int number);
+    // Load into the specified 'result' the enumerator matching the
+    // specified 'number'.  Return 0 on success, and a non-zero value
+    // with no effect on 'result' if 'number' does not match any
+    // enumerator.
+
+template <typename ENUM>
+int bdlat_enumFromString(EnumBase<ENUM> *result,
+                         const char     *string,
+                         int             stringLength);
+    // Load into the specified 'result' the enumerator matching the
+    // specified 'string' of the specified 'stringLength'.  Return 0 on
+    // success, and a non-zero value with no effect on 'result' if
+    // 'string' and 'stringLength' do not match any enumerator.
+
+template <typename ENUM>
+void bdlat_enumToInt(int *result, const EnumBase<ENUM>& value);
+    // Return the integer representation exactly matching the
+    // enumerator name corresponding to the specified enumeration
+    // 'value'.
+
+template <typename ENUM>
+void bdlat_enumToString(bsl::string *result, const EnumBase<ENUM>& value);
+    // Return the string representation exactly matching the enumerator
+    // name corresponding to the specified enumeration 'value'.
+
+// Below are the definitions of the function templates declared above.
+//
+template <typename ENUM>
+int bdlat_enumFromInt(EnumBase<ENUM> *result, int number)
+{
+    if (number < 0 || number >= ENUM::k_NUM_VALUES) {
+        return -1;  // failure, no op
+    }
+
+    BSLS_ASSERT(result);
+    
+    static_cast<ENUM&>(*result) = ENUM::Value(number);
+
+    return 0;  // success
+}
+
+template <typename ENUM>
+int bdlat_enumFromString(EnumBase<ENUM>  *result,
+                         const char      *string,
+                         int              stringLength)
+{
+    BSLS_ASSERT(result);
+
+    return static_cast<ENUM&>(*result).fromString(
+        bslstl::StringRef(string, stringLength));
+}
+
+template <typename ENUM>
+void bdlat_enumToInt(int *result, const EnumBase<ENUM>& value)
+{
+    BSLS_ASSERT(result);
+
+    *result = int(static_cast<const ENUM&>(value));
+}
+
+template <typename ENUM>
+void bdlat_enumToString(bsl::string *result, const EnumBase<ENUM>& value)
+{
+    BSLS_ASSERT(result);
+
+    *result = static_cast<const ENUM&>(value).toString();
+}
+
+}  // close package namespace
+
+// Define the 'IsEnumeration' trait for all classes derived from 'EnumBase'.
+namespace bdlat_EnumFunctions {
+
+template <typename ENUM>
+struct IsEnumeration<ipcu::EnumBase<ENUM> > {
+    enum { VALUE = 1 };
+};
+
+}  // close traits namespace
+}  // close enterprise namespace
 
 // Utility macros needed to define the 'IPCU_DEFINE_ENUM' macro. Variable
 // argument lists are limited to at most 25 arguments.
@@ -223,17 +320,17 @@
 //       and when printed it will display as "FOO" (without the quotes).
 //
 #define IPCU_DEFINE_ENUM(NAME, ...)                                           \
-    class NAME {                                                              \
+    class NAME : public ::BloombergLP::ipcu::EnumBase<NAME> {                 \
       public:                                                                 \
         enum Value { IPCU_ENUMIFY_EACH(__VA_ARGS__) };                        \
                                                                               \
-        static const unsigned NUM_VALUES = IPCU_NUM_ARGS(__VA_ARGS__);        \
+        static const unsigned k_NUM_VALUES = IPCU_NUM_ARGS(__VA_ARGS__);        \
                                                                               \
-        static const ::BloombergLP::bslstl::StringRef (&names())[NUM_VALUES]  \
+        static const ::BloombergLP::bslstl::StringRef (&names())[k_NUM_VALUES]  \
         {                                                                     \
             typedef ::BloombergLP::bslstl::StringRef StringRef;               \
                                                                               \
-            static const StringRef(*dataPtr)[NUM_VALUES] = 0;                 \
+            static const StringRef(*dataPtr)[k_NUM_VALUES] = 0;                 \
             BSLMT_ONCE_DO                                                     \
             {                                                                 \
                 static const StringRef data[] = {                             \
@@ -288,7 +385,7 @@
             BSLMT_ONCE_DO                                                     \
             {                                                                 \
                 static Map mapInstance(bslma::Default::globalAllocator());    \
-                for (size_t i = 0; i < NUM_VALUES; ++i)                       \
+                for (size_t i = 0; i < k_NUM_VALUES; ++i)                       \
                     mapInstance.emplace(names()[i], Value(i));                \
                 mapPtr = &mapInstance;                                        \
             }                                                                 \
