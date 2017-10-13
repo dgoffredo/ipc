@@ -75,22 +75,20 @@
 namespace BloombergLP {
 namespace ipcu {
 
-template <typename ENUM>
-class EnumBase {
-    // 'EnumBase' is used as a base class for all classes defined using
-    // 'IPCU_DEFINE_ENUM'.  It allows the 'bdlat_enumfunctions' to be used on
-    // instances of the generated type.
+template <typename ENUM_TAG>
+class Enum {
+    // TODO
 };
 
-template <typename ENUM>
-int bdlat_enumFromInt(EnumBase<ENUM> *result, int number);
+template <typename ENUM_TAG>
+int bdlat_enumFromInt(Enum<ENUM_TAG> *result, int number);
     // Load into the specified 'result' the enumerator matching the
     // specified 'number'.  Return 0 on success, and a non-zero value
     // with no effect on 'result' if 'number' does not match any
     // enumerator.
 
-template <typename ENUM>
-int bdlat_enumFromString(EnumBase<ENUM> *result,
+template <typename ENUM_TAG>
+int bdlat_enumFromString(Enum<ENUM_TAG> *result,
                          const char     *string,
                          int             stringLength);
     // Load into the specified 'result' the enumerator matching the
@@ -98,22 +96,24 @@ int bdlat_enumFromString(EnumBase<ENUM> *result,
     // success, and a non-zero value with no effect on 'result' if
     // 'string' and 'stringLength' do not match any enumerator.
 
-template <typename ENUM>
-void bdlat_enumToInt(int *result, const EnumBase<ENUM>& value);
+template <typename ENUM_TAG>
+void bdlat_enumToInt(int *result, const Enum<ENUM_TAG>& value);
     // Return the integer representation exactly matching the
     // enumerator name corresponding to the specified enumeration
     // 'value'.
 
-template <typename ENUM>
-void bdlat_enumToString(bsl::string *result, const EnumBase<ENUM>& value);
+template <typename ENUM_TAG>
+void bdlat_enumToString(bsl::string *result, const Enum<ENUM_TAG>& value);
     // Return the string representation exactly matching the enumerator
     // name corresponding to the specified enumeration 'value'.
 
 // Below are the definitions of the function templates declared above.
 //
-template <typename ENUM>
-int bdlat_enumFromInt(EnumBase<ENUM> *result, int number)
+template <typename ENUM_TAG>
+int bdlat_enumFromInt(Enum<ENUM_TAG> *result, int number)
 {
+    typedef Enum<ENUM_TAG> Value;
+
     if (number < 0 || number >= ENUM::k_NUM_VALUES) {
         return -1;  // failure, no op
     }
@@ -125,40 +125,41 @@ int bdlat_enumFromInt(EnumBase<ENUM> *result, int number)
     return 0;  // success
 }
 
-template <typename ENUM>
-int bdlat_enumFromString(EnumBase<ENUM>  *result,
+template <typename ENUM_TAG>
+int bdlat_enumFromString(Enum<ENUM_TAG>  *result,
                          const char      *string,
                          int              stringLength)
 {
+    typedef Enum<ENUM_TAG> Value;
+
     BSLS_ASSERT(result);
 
-    return static_cast<ENUM&>(*result).fromString(
-        bslstl::StringRef(string, stringLength));
+    return result->fromString(bslstl::StringRef(string, stringLength));
 }
 
-template <typename ENUM>
-void bdlat_enumToInt(int *result, const EnumBase<ENUM>& value)
+template <typename ENUM_TAG>
+void bdlat_enumToInt(int *result, const Enum<ENUM_TAG>& value)
 {
     BSLS_ASSERT(result);
 
-    *result = int(static_cast<const ENUM&>(value));
+    *result = int(value);
 }
 
-template <typename ENUM>
-void bdlat_enumToString(bsl::string *result, const EnumBase<ENUM>& value)
+template <typename ENUM_TAG>
+void bdlat_enumToString(bsl::string *result, const Enum<ENUM_TAG>& value)
 {
     BSLS_ASSERT(result);
 
-    *result = static_cast<const ENUM&>(value).toString();
+    *result = value.toString();
 }
 
 }  // close package namespace
 
-// Define the 'IsEnumeration' trait for all classes derived from 'EnumBase'.
+// Define the 'IsEnumeration' trait for all classes derived from 'Enum'.
 namespace bdlat_EnumFunctions {
 
-template <typename ENUM>
-struct IsEnumeration<ipcu::EnumBase<ENUM> > {
+template <typename ENUM_TAG>
+struct IsEnumeration<ipcu::Enum<ENUM_TAG> > {
     enum { VALUE = 1 };
 };
 
@@ -320,7 +321,7 @@ struct IsEnumeration<ipcu::EnumBase<ENUM> > {
 //       and when printed it will display as "FOO" (without the quotes).
 //
 #define IPCU_DEFINE_ENUM(NAME, ...)                                           \
-    class NAME : public ::BloombergLP::ipcu::EnumBase<NAME> {                 \
+    class NAME : public ::BloombergLP::ipcu::Enum<NAME> {                 \
       public:                                                                 \
         enum Value { IPCU_ENUMIFY_EACH(__VA_ARGS__) };                        \
                                                                               \
