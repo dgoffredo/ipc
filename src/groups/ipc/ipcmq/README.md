@@ -201,7 +201,7 @@ void chester(ipcmq::Receiver *from, ipcmq::Sender *to)
 {
     bsl::string response;
     do {
-        to->send("Dude! What does mine say?");
+        to->send("Sweet! What does mine say?");
         from->receive(&response);
     } while (!satisfied(response));
 }
