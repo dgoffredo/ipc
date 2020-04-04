@@ -35,7 +35,9 @@ struct AlgoUtil {
         //: o 'notTooLarge(startingValue)' is true
         //: o 'startingValue' is non-negative
         //: o if 'notTooLarge(a)' is true for some 'a', then 'notTooLarge(b)'
-        //    is true for every 'b >= a'.
+        //:   is true for every 'b <= a'.
+        //: o if 'notTooLarge(a)' is false for some 'a', then 'notTooLarge(b)'
+        //:   is false for every 'b >= a'.
         // Note that this function does not allow the specification of an
         // epsilon, and so is not efficient for floating point types.
 
