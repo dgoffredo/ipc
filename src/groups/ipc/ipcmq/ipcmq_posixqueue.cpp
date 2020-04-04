@@ -54,7 +54,7 @@ typename OPERATION::Result convertBasicError(int errorNumber)
     // Operations like 'mq_close', 'mq_getattr', and 'mq_setattr' fail only
     // if the descriptor is invalid, which could be guaranteed impossible by
     // the 'PosixQueue' class, but since the definition of "valid descriptor"
-    // is not perfectly clear, this component accomodates the possibility of
+    // is not perfectly clear, this component accommodates the possibility of
     // those operations failing anyway.
 {
     switch (errorNumber) {
@@ -150,12 +150,12 @@ int temporaryQueue(const mq_attr *inputAttributes, mq_attr *outputAttributes)
     // when creating the queue. If the specified 'outputAttributes' is not
     // zero, query the created queue's attributes and store them in
     // 'outputAttributes' before destroying the queue. If the generated queue
-    // name is not unique, retry an unspecified number of times with a diffent
-    // randomly generated name. Return zero on success. If the maximum number
-    // of retries is reached, return the nonzero 'errno'. If the creation of
-    // the queue fails for some other reason, return the nonzero 'errno'. If
-    // 'outputAttributes' is not zero and the querying of the queue's
-    // attributes fails, return the nonzero 'errno'.
+    // name is not unique, retry an unspecified number of times with a
+    // different randomly generated name. Return zero on success. If the
+    // maximum number of retries is reached, return the nonzero 'errno'. If the
+    // creation of the queue fails for some other reason, return the nonzero
+    // 'errno'. If 'outputAttributes' is not zero and the querying of the
+    // queue's attributes fails, return the nonzero 'errno'.
 {
     BALL_LOG_SET_CATEGORY(k_LOG_CATEGORY);
 

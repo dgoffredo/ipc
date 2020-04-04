@@ -333,11 +333,13 @@ int FormatUtil::encodeExtended(long               maxMessageSize,
     bslstl::StringRef& message = *originalAndOutput;
     bsl::string&       buffer  = *messageBuffer;
 
-    // If the message is not longer than 'maxMessageSize', then just write it
-    // to the 'buffer' along with the trailing "in place" byte.
+    // If the message is shorter than 'maxMessageSize', then just write it
+    // to the 'buffer' along with the trailing "in place" byte (it has to be
+    // _shorter_ than 'maxMessageSize' so that there's at least one byte left
+    // for the "in place" byte).
     if (long(message.length()) < maxMessageSize) {
         // If 'message' aliases 'buffer' completely, then we don't have to
-        // copy. Otherwise we do.
+        // copy. Otherwise we do have to copy.
         if (message.data() != buffer.data() ||
             message.length() != buffer.size()) {
             buffer.assign(message);

@@ -91,14 +91,14 @@ DEFINE_CATEGORY(Close, SetNonBlocking, e_CLOSED, e_BAD_DESCRIPTOR);
 const char *description(int returnCode);
 const char *description(int returnCode, const char *(*overflow)(int));
     // Return a technical description of the error indicated by the specified
-    // 'returnCode'. If 'convertedReturnCode' is larger than any code known to
-    // this component, then instead return the result of invoking the
-    // optionally specified 'overflow' with the amount by which
-    // 'convertedReturnCode' exceeds the greatest code known to this component.
-    // If 'overflow' is not specified, then a default error message will be
-    // used instead. The behavior is undefined unless either
-    // 'convertedReturnCode' corresponds to an code known to this component, or
-    // 'overflow' returns a pointer to a valid null-terminated string.
+    // 'returnCode'. If 'returnCode' is larger than any code known to this
+    // component, then instead return the result of invoking the optionally
+    // specified 'overflow' with the amount by which 'returnCode' exceeds the
+    // greatest code known to this component. If 'overflow' is not specified,
+    // then a default error message will be used instead. The behavior is
+    // undefined unless either 'returnCode' corresponds to an code known to
+    // this component, or 'overflow' returns a pointer to a valid
+    // null-terminated string.
 
 int makeError(int errorCode);
     // Return the specified 'errorCode' increased by an amount such that if it
